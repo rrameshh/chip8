@@ -1,4 +1,4 @@
-# Chip-8 Emulator
+# Chip-8 Emulator/Interpreter
 
 This is a Chip-8 emulator written in C using SDL2 for graphics and input handling.
 
