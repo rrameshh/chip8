@@ -359,12 +359,12 @@ chip8_t emulateCycle(chip8_t chip8)
         case (0xE000): {
             switch(kk) {
                 case 0x009E: {
-                    if (chip8.keys[chip8.registers[x]] == 1) // is the shift correct??
+                    if (chip8.keys[chip8.registers[x]] == 1) 
                         chip8.pc+=2;
                     break;
                 }
                 case 0x00A1: {
-                    if (chip8.keys[chip8.registers[x]] == 0) // is the shift correct??
+                    if (chip8.keys[chip8.registers[x]] == 0) 
                         chip8.pc+=2;
                     break;
                 }
@@ -373,7 +373,7 @@ chip8_t emulateCycle(chip8_t chip8)
         }
         case (0xF000): {
             switch(chip8.opcode & 0x00FF) {
-                printf("made it inside f section");
+
                 case 0x0065: {
                     for (int i = 0; i<x; i++) {
                         chip8.registers[i] = chip8.memory[chip8.index + i];
@@ -385,73 +385,18 @@ chip8_t emulateCycle(chip8_t chip8)
                     break;
                 }
                 case 0x000A: {
-                    if (chip8.keys[0] == 1) {
-		                chip8.registers[x] = 0;
-	                }
-	                else if (chip8.keys[1] == 1)
-	                {
-		                chip8.registers[x] = 1;
-	                }
-	                else if (chip8.keys[2] == 1)
-	                {
-		                chip8.registers[x] = 2;
-	                }
-	                else if (chip8.keys[3] == 1)
-	                {
-		                chip8.registers[x] = 3;
-	                }
-	                else if (chip8.keys[4] == 1)
-	                {
-		                chip8.registers[x] = 4;
-	                }
-	                else if (chip8.keys[5] == 1)
-	                {
-		                chip8.registers[x] = 5;
-	                }
-	                else if (chip8.keys[6] == 1)
-	                {
-		                chip8.registers[x] = 6;
-	                }
-	                else if (chip8.keys[7] == 1)
-	                {
-		                chip8.registers[x] = 7;
-	                }
-	                else if (chip8.keys[8] == 1)
-	                {
-		                chip8.registers[x] = 8;
-	                }
-	                else if (chip8.keys[9] == 1)
-	                {
-		                chip8.registers[x] = 9;
-	                }
-	                else if (chip8.keys[10] == 1)
-	                {
-		                chip8.registers[x] = 10;
-	                }
-	                else if (chip8.keys[11])
-	                {
-		                chip8.registers[x] = 11;
-	                }
-	                else if (chip8.keys[12] == 1)
-	                {
-		                chip8.registers[x] = 12;
-	                }
-	                else if (chip8.keys[13] == 1)
-	                {
-		                chip8.registers[x] = 13;
-	                }
-	                else if (chip8.keys[14] == 1)
-	                {
-		                chip8.registers[x] = 14;
-	                }
-	                else if (chip8.keys[15] == 1)
-	                {
-		                chip8.registers[x] = 15;
-	                }
-	                else
-	                {
-		                chip8.pc -= 2;
-	                }
+                    bool key_pressed = false;
+                    for (int i = 0; i < 16; ++i) {
+                        if (chip8.keys[i] == 1) {
+                            chip8.registers[x] = i;
+                            key_pressed = true;
+                            break;
+                        }
+                    }
+                    if (!key_pressed) {
+                        chip8.pc -= 2; // Repeat the instruction until a key is pressed
+                    }
+                    
                     break;
                 }
             case 0x0015: {
