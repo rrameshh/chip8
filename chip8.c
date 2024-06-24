@@ -16,7 +16,7 @@ typedef struct chip8
     uint8_t sp;
     uint8_t delaytimer;
     uint8_t soundtimer;
-    uint8_t keypad[16];
+    // uint8_t keypad[16];
     uint8_t screen[64 * 32];
     uint16_t opcode;
     bool drawflag;
@@ -25,30 +25,22 @@ typedef struct chip8
 
 // bool drawflag;
 
-#define KEY_1 '1'
-#define KEY_2 '2'
-#define KEY_3 '3'
-#define KEY_C '4'
-
-#define KEY_4 'q'
-#define KEY_5 'w'
-#define KEY_6 'e'
-#define KEY_D 'r'
-
-#define KEY_7 'a'
-#define KEY_8 's'
-#define KEY_9 'd'
-#define KEY_E 'f'
-
-#define KEY_A 'z'
-#define KEY_0 'x'
-#define KEY_B 'c'
-#define KEY_F 'v'
-
-#define KEY_PAUSE 'p'
-#define KEY_DEBUG 'b'
-#define KEY_INFO 'i'
-#define KEY_HALT 'h'
+#define KEY_0 SDLK_x
+#define KEY_1 SDLK_1
+#define KEY_2 SDLK_2
+#define KEY_3 SDLK_3
+#define KEY_4 SDLK_q
+#define KEY_5 SDLK_w
+#define KEY_6 SDLK_e
+#define KEY_7 SDLK_a
+#define KEY_8 SDLK_s
+#define KEY_9 SDLK_d
+#define KEY_A SDLK_z
+#define KEY_B SDLK_c
+#define KEY_C SDLK_4
+#define KEY_D SDLK_r
+#define KEY_E SDLK_f
+#define KEY_F SDLK_v
 
 
 // uint8_t keys[16];
@@ -181,7 +173,7 @@ void print_debug_info(chip8_t chip8)
     printf("Keypad:\n");
     for (int i = 0; i < 16; ++i)
     {
-        printf("%X ", chip8.keypad[i]);
+        printf("%X ", chip8.keys[i]);
     }
     printf("\n");
 
@@ -397,7 +389,7 @@ chip8_t emulateCycle(chip8_t chip8)
                     break;
                 }
                 case 0x00A1: {
-                    if (chip8.keys[chip8.registers[x] >>8] == 0) // is the shift correct??
+                    if (chip8.keys[chip8.registers[x]] == 0) // is the shift correct??
                         chip8.pc+=2;
                     break;
                 }
@@ -598,7 +590,7 @@ int main(int argc, char **argv)
     chip8.pc = 0x200;
     chip8.index = 0;
     chip8.sp = 0;
-    chip8.opcode = 0;;
+    chip8.opcode = 0;
     for (int i = 0; i < 16; i++)
     {
         chip8.registers[i] = 0;
@@ -616,10 +608,14 @@ int main(int argc, char **argv)
     chip8 = loadGame(argv[1], chip8);
 
 
-    SDL_Event event;
+   
     int running = 1;
     while (running)
-    {
+    { 
+        // running = handle_input(chip8);
+        // if (running == 0) break;
+        
+        SDL_Event event;
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -628,7 +624,7 @@ int main(int argc, char **argv)
                 break;
             }
 
-            // /*  
+             
             else if (event.type == SDL_KEYDOWN) {
                 char chr_down = SDL_GetKeyName(event.key.keysym.sym)[0];
                     // char chr = key[0];
@@ -697,8 +693,10 @@ int main(int argc, char **argv)
                             chip8.keys[15] = 1;
                             break;
                         }
+                        default: break;
   
                     }
+                    break;
             }
             else if (event.type == SDL_KEYUP) {
                 char chr_up = SDL_GetKeyName(event.key.keysym.sym)[0];
@@ -768,12 +766,12 @@ int main(int argc, char **argv)
                             chip8.keys[15] = 0;
                             break;
                         }
+                        default: break;
                     }
+                    break;
             }
-                
-               
-            
-        }
+            break;  
+        } 
 
         chip8 = emulateCycle(chip8);
 
@@ -781,6 +779,13 @@ int main(int argc, char **argv)
             drawGraphics(renderer, chip8);
             chip8.drawflag = false;
         }
+
+        printf("Keypad:\n");
+        for (int i = 0; i < 16; ++i)
+        {
+            printf("%X ", chip8.keys[i]);
+        }
+        printf("\n");
         SDL_Delay(16);
         // printf("%X\n", chip8.opcode);
 
@@ -795,9 +800,9 @@ int main(int argc, char **argv)
 
         
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    // SDL_DestroyRenderer(renderer);
+    // SDL_DestroyWindow(window);
+    // SDL_Quit();
     return 0;
 }
 //}
