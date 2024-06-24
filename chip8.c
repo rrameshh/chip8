@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "/usr/local/include/SDL2/SDL.h"
 #include "/usr/local/include/SDL2/SDL_render.h"
+
 #include <time.h>
 #include <stdbool.h>
 #include <string.h>
@@ -107,24 +108,6 @@ chip8_t loadGame(const char *filename, chip8_t chip8)
         exit(EXIT_FAILURE);
     }
 
-    // Load the game data into Chip-8 memory starting from address 0x200 (512)
-    // Only copy up to fileSize bytes
-    // for (uint8_t i = 0; i < fileSize; ++i)
-    // {
-    //     if (i + 0x200 < 4096) {
-    //         chip8.memory[0x200 + i] = buffer[i];
-    //     } else {
-    //         fprintf(stderr, "Error: Game file size exceeds Chip-8 memory capacity.\n");
-    //         break;
-    //     }c
-    // }
-
-    // for (size_t i = 0; i < (size_t)fileSize; ++i)
-    // {
-    //     printf("%X", buffer[i]);
-
-    // }
-    // printf("\n");
 
     memcpy(&chip8.memory[512], buffer, bytesRead * sizeof(uint8_t));
 
@@ -190,10 +173,6 @@ void print_debug_info(chip8_t chip8)
 
 chip8_t emulateCycle(chip8_t chip8)
 {
-    // printf("chip8.memory[chip8.pc]: %X", chip8.memory[chip8.pc]);
-
-    // printf("chip8.memory[chip8.pc] << 8: %X", chip8.memory[chip8.pc] << 8);
-    // printf("chip8.memory[chip8.pc+1]: %X", chip8.memory[chip8.pc+1]);
     chip8.opcode = (uint16_t)(chip8.memory[chip8.pc] << 8) |(uint16_t)(chip8.memory[chip8.pc+1]);
     printf("Fetched Opcode: 0x%X\n", chip8.opcode);
     uint16_t nnn = (chip8.opcode & 0x0FFF);
@@ -201,8 +180,7 @@ chip8_t emulateCycle(chip8_t chip8)
     uint16_t x = (chip8.opcode & 0x0F00) >> 8;
     uint16_t y = (chip8.opcode & 0x00F0) >> 4;
     uint16_t kk = (chip8.opcode & 0x00FF);
-    
-    // uint16_t first = chip8.opcode & 0xF000;
+
     chip8.pc+=2;
     
 
@@ -227,10 +205,7 @@ chip8_t emulateCycle(chip8_t chip8)
             break;
         }
         case (0x2000): {
-            //chip8.sp++;
-            // chip8.stack[chip8.sp] = chip8.pc;
-            // chip8.sp++;
-            // chip8.pc = nnn;
+
             chip8.stack[chip8.sp++] = chip8.pc;
             chip8.pc = nnn;
             break;
@@ -410,46 +385,46 @@ chip8_t emulateCycle(chip8_t chip8)
                     break;
                 }
                 case 0x000A: {
-                    if (chip8.keys[0]) {
+                    if (chip8.keys[0] == 1) {
 		                chip8.registers[x] = 0;
 	                }
-	                else if (chip8.keys[1])
+	                else if (chip8.keys[1] == 1)
 	                {
 		                chip8.registers[x] = 1;
 	                }
-	                else if (chip8.keys[2])
+	                else if (chip8.keys[2] == 1)
 	                {
 		                chip8.registers[x] = 2;
 	                }
-	                else if (chip8.keys[3])
+	                else if (chip8.keys[3] == 1)
 	                {
 		                chip8.registers[x] = 3;
 	                }
-	                else if (chip8.keys[4])
+	                else if (chip8.keys[4] == 1)
 	                {
 		                chip8.registers[x] = 4;
 	                }
-	                else if (chip8.keys[5])
+	                else if (chip8.keys[5] == 1)
 	                {
 		                chip8.registers[x] = 5;
 	                }
-	                else if (chip8.keys[6])
+	                else if (chip8.keys[6] == 1)
 	                {
 		                chip8.registers[x] = 6;
 	                }
-	                else if (chip8.keys[7])
+	                else if (chip8.keys[7] == 1)
 	                {
 		                chip8.registers[x] = 7;
 	                }
-	                else if (chip8.keys[8])
+	                else if (chip8.keys[8] == 1)
 	                {
 		                chip8.registers[x] = 8;
 	                }
-	                else if (chip8.keys[9])
+	                else if (chip8.keys[9] == 1)
 	                {
 		                chip8.registers[x] = 9;
 	                }
-	                else if (chip8.keys[10])
+	                else if (chip8.keys[10] == 1)
 	                {
 		                chip8.registers[x] = 10;
 	                }
@@ -457,19 +432,19 @@ chip8_t emulateCycle(chip8_t chip8)
 	                {
 		                chip8.registers[x] = 11;
 	                }
-	                else if (chip8.keys[12])
+	                else if (chip8.keys[12] == 1)
 	                {
 		                chip8.registers[x] = 12;
 	                }
-	                else if (chip8.keys[13])
+	                else if (chip8.keys[13] == 1)
 	                {
 		                chip8.registers[x] = 13;
 	                }
-	                else if (chip8.keys[14])
+	                else if (chip8.keys[14] == 1)
 	                {
 		                chip8.registers[x] = 14;
 	                }
-	                else if (chip8.keys[15])
+	                else if (chip8.keys[15] == 1)
 	                {
 		                chip8.registers[x] = 15;
 	                }
@@ -626,71 +601,71 @@ int main(int argc, char **argv)
 
              
             else if (event.type == SDL_KEYDOWN) {
-                char chr_down = SDL_GetKeyName(event.key.keysym.sym)[0];
+                // char chr_down = SDL_GetKeyName(event.key.keysym.sym)[0];
                     // char chr = key[0];
-                     switch(chr_down) {
+                     switch(event.key.keysym.sym) {
                         case KEY_0: {
-                            chip8.keys[0] = 1;
+                            chip8.keys[0x00] = 1;
                             break;
                         }
                         case KEY_1: {
-                            chip8.keys[1] = 1;
+                            chip8.keys[0x01] = 1;
                             break;
                         }
                         case KEY_2: {
-                            chip8.keys[2] = 1;
+                            chip8.keys[0x02] = 1;
                             break;
                         }
                         case KEY_3: {
-                            chip8.keys[3] = 1;
+                            chip8.keys[0x03] = 1;
                             break;
                         }
                         case KEY_4: {
-                            chip8.keys[4] = 1;
+                            chip8.keys[0x04] = 1;
                             break;
                         }
                         case KEY_5: {
-                            chip8.keys[5] = 1;
+                            chip8.keys[0x05] = 1;
                             break;
                         }
                         case KEY_6: {
-                            chip8.keys[6] = 1;
+                            chip8.keys[0x06] = 1;
                             break;
                         }
                         case KEY_7: {
-                            chip8.keys[7] = 1;
+                            chip8.keys[0x07] = 1;
                             break;
                         }
                         case KEY_8: {
-                            chip8.keys[8] = 1;
+                            chip8.keys[0x08] = 1;
                             break;
                         }
                         case KEY_9: {
-                            chip8.keys[9] = 1;
+                            chip8.keys[0x09] = 1;
                             break;
                         }
                         case KEY_A: {
-                            chip8.keys[10] = 1;
+                            chip8.keys[0x0A] = 1;
                             break;
                         }
                         case KEY_B: {
-                            chip8.keys[11] = 1;
+                            chip8.keys[0x0B] = 1;
                             break;
                         }
                         case KEY_C: {
-                            chip8.keys[12] = 1;
+                            chip8.keys[0x0C] = 1;
                             break;
                         } 
                         case KEY_E: {
-                            chip8.keys[14] = 1;
+                            chip8.keys[0x0D] = 1;
                             break;
                         }
                         case KEY_D: {
-                            chip8.keys[13] = 1;
+                            chip8.keys[0x0E] = 1;
                             break;
                         }
                         case KEY_F: {
-                            chip8.keys[15] = 1;
+                            chip8.keys[0x0F] = 1;
                             break;
                         }
                         default: break;
@@ -699,39 +674,39 @@ int main(int argc, char **argv)
                     break;
             }
             else if (event.type == SDL_KEYUP) {
-                char chr_up = SDL_GetKeyName(event.key.keysym.sym)[0];
+                // char chr_up = SDL_GetKeyName(event.key.keysym.sym)[0];
                     // if (strlen(key) > 1) break;
-                    switch(chr_up) {
+                    switch(event.key.keysym.sym) {
                         case KEY_0: {
-                            chip8.keys[0] = 0;
+                            chip8.keys[0x00] = 0;
                             break;
                         }
                         case KEY_1: {
-                            chip8.keys[1] = 0;
+                            chip8.keys[0x01] = 0;
                             break;
                         }
                         case KEY_2: {
-                            chip8.keys[2] = 0;
+                            chip8.keys[0x02] = 0;
                             break;
                         }
                         case KEY_3: {
-                            chip8.keys[3] = 0;
+                            chip8.keys[0x03] = 0;
                             break;
                         }
                         case KEY_4: {
-                            chip8.keys[4] = 0;
+                            chip8.keys[0x04] = 0;
                             break;
                         }
                         case KEY_5: {
-                            chip8.keys[5] = 0;
+                            chip8.keys[0x05] = 0;
                             break;
                         }
                         case KEY_6: {
-                            chip8.keys[6] = 0;
+                            chip8.keys[0x06] = 0;
                             break;
                         }
                         case KEY_7: {
-                            chip8.keys[7] = 0;
+                            chip8.keys[0x07] = 0;
                             break;
                         }
                         case KEY_8: {
@@ -739,31 +714,31 @@ int main(int argc, char **argv)
                             break;
                         }
                         case KEY_9: {
-                            chip8.keys[9] = 0;
+                            chip8.keys[0x09] = 0;
                             break;
                         }
                         case KEY_A: {
-                            chip8.keys[10] = 0;
+                            chip8.keys[0x0A] = 0;
                             break;
                         }
                         case KEY_B: {
-                            chip8.keys[11] = 0;
+                            chip8.keys[0x0B] = 0;
                             break;
                         }
                         case KEY_C: {
-                            chip8.keys[12] = 0;
+                            chip8.keys[0x0C] = 0;
                             break;
                         } 
                         case KEY_E: {
-                            chip8.keys[14] = 0;
+                            chip8.keys[0x0D] = 0;
                             break;
                         }
                         case KEY_D: {
-                            chip8.keys[13] = 0;
+                            chip8.keys[0x0E] = 0;
                             break;
                         }
                         case KEY_F: {
-                            chip8.keys[15] = 0;
+                            chip8.keys[0x0F] = 0;
                             break;
                         }
                         default: break;
