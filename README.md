@@ -21,8 +21,3 @@ This is a Chip-8 emulator written in C using SDL2 for graphics and input handlin
 2. **Run**: run this command
    ```bash
     ./chip8 <path_to_ROM_file>
-
-   
-
-  
-
