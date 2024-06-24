@@ -1,6 +1,6 @@
 # Chip-8 Emulator/Interpreter
 
-This is a Chip-8 emulator written in C using SDL2 for graphics and input handling.
+This is a Chip-8 emulator written in C using SDL2 for graphics and input handling. (hardware quirks unimplemented). It can display most ch8 files, but input performance isn't stable. Works on all test ROMS
 
 ## Features
 
@@ -18,7 +18,11 @@ This is a Chip-8 emulator written in C using SDL2 for graphics and input handlin
 1. **Compile**: Compile the emulator using the makefile: 
    ```bash
    make
+2. **Run**: run this command
+   ```bash
     ./chip8 <path_to_ROM_file>
+
+   
 
   
 
